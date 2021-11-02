@@ -4,22 +4,24 @@ from utils.all_utils import prepare_data
 import pandas as pd
 import numpy as np
 
-AND = {
-    "x1": [0,0,1,1],
-    "x2": [0,1,0,1],
-    "y": [0,0,0,1],
-}
+def main(data,eta,epochs,modelFileNam,plotFileNam):
+    df = pd.DataFrame(data)
+    print(df)
+    X,y = prepare_data(df)
 
-df = pd.DataFrame(AND)
-print(df)
+    model = Perceptron(eta=ETA, epochs=EPOCHS)
+    model.fit(X, y)
+    _ = model.total_loss() #dummy variable
 
-X,y = prepare_data(df)
-ETA = 0.3 # 0 and 1
-EPOCHS = 10
+    save_model(model,modelFileNam)   
+    save_plot(df,plotFileNam,model)
 
-model = Perceptron(eta=ETA, epochs=EPOCHS)
-model.fit(X, y)
-_ = model.total_loss()
-
-save_model(model,"and.model")   
-save_plot(df,"and.png",model)
+if __name__ == "__main__": # entry point
+    AND = {
+        "x1": [0,0,1,1],
+        "x2": [0,1,0,1],
+        "y": [0,0,0,1],
+    }
+    ETA = 0.3 # 0 and 1
+    EPOCHS = 10
+    main(data=AND,eta=ETA,epochs=EPOCHS,modelFileNam="and.model",plotFileNam="and.png")
