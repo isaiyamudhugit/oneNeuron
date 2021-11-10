@@ -5,6 +5,7 @@ import joblib # for saving my model as a binary file
 from matplotlib.colors import ListedColormap
 import os
 plt.style.use("fivethirtyeight") # THIS IS STYLE OF GRAPHS
+import logging
 
 def prepare_data(df):
   """It is used to seperate the dependent variable and independent feature
@@ -15,6 +16,7 @@ def prepare_data(df):
   Returns:
       tuple: It returns the tuples of dependent variable and independent feature
   """
+  logging.info("preparing the data by segregating independent and dependent variable")
   X = df.drop("y", axis=1)
   y = df["y"]
   return X, y
@@ -26,10 +28,12 @@ def save_model(model, filename):
       model (python object): trained model to
       filename (str): path to save the trained model
   """
+  logging.info("Saving the trained model")
   model_dir = "models"
   os.makedirs(model_dir, exist_ok=True) # ONLY CREATE IF MODEL_DIR DOESN"T EXISTS
   filePath = os.path.join(model_dir, filename) # model/filename
   joblib.dump(model, filePath)
+  logging.info(f"Saved the trained model at {filePath}")
 
 def save_plot(df, file_name, model):
   """
@@ -38,6 +42,12 @@ def save_plot(df, file_name, model):
   :param model: trained model
   """
   def _create_base_plot(df):
+    """ creating the the basic plot for  
+
+    Args:
+        df (pd.DataFrame): predicted dataframe
+    """
+    logging.info("creating the base plot")
     df.plot(kind="scatter", x="x1", y="x2", c="y", s=100, cmap="winter")
     plt.axhline(y=0, color="black", linestyle="--", linewidth=1)
     plt.axvline(x=0, color="black", linestyle="--", linewidth=1)
@@ -45,6 +55,7 @@ def save_plot(df, file_name, model):
     figure.set_size_inches(10, 8)
 
   def _plot_decision_regions(X, y, classfier, resolution=0.02):
+    logging.info("ploting the decision region")
     colors = ("red", "blue", "lightgreen", "gray", "cyan")
     cmap = ListedColormap(colors[: len(np.unique(y))])
 
@@ -56,8 +67,8 @@ def save_plot(df, file_name, model):
 
     xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution), 
                            np.arange(x2_min, x2_max, resolution))
-    print(xx1)
-    print(xx1.ravel())
+    #print(xx1)
+    #print(xx1.ravel())
     Z = classfier.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
     Z = Z.reshape(xx1.shape)
     plt.contourf(xx1, xx2, Z, alpha=0.2, cmap=cmap)
@@ -73,4 +84,5 @@ def save_plot(df, file_name, model):
   plot_dir = "plots"
   os.makedirs(plot_dir, exist_ok=True) # ONLY CREATE IF MODEL_DIR DOESN"T EXISTS
   plotPath = os.path.join(plot_dir, file_name) # model/filename
-  plt.savefig(plotPath)   
+  plt.savefig(plotPath)
+  logging.info(f"Saving the plot at {plotPath}")   
